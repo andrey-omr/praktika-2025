@@ -1,0 +1,133 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+.main-block {
+    display: flex;
+}
+.menu {
+    padding: 10px;
+    width: 20vw;
+    height: calc(100vh - 20px);
+    background-color: antiquewhite;
+    text-align: center;
+}
+.menu img {
+    height: 20px;
+    padding: 10px;
+    border-radius: 50%;
+}
+.menu h1 {
+    margin: 10px;
+    padding-bottom: 20px;
+    font-size: 30px;
+    border-bottom: 1px solid;
+}
+.menu input {
+    border: 0;
+    margin: 20px 0 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    padding: 5px;
+}
+.first button {
+    display: flex;
+    border-radius: 40px;
+    width: 90%;
+    height: 50px;
+}
+.work-window {
+    background-color: azure;
+    width: calc(100vw - 20vw);
+    height: calc(100vh - 20px);
+    padding: 10px;
+}
+.wwt {
+    display: flex;
+    border-bottom: 1px solid #9b9898;
+    padding-bottom: 5px;
+}
+.wwt img {
+    height: 54px;
+    border-radius: 50%;
+}
+.wwt p {
+    margin-left: 10px;
+    font-size: 22px;
+    color: #333;
+}
+.auth-block {
+    margin: auto;
+    margin-top: 80px;
+    width: 500px;
+    height: 270px;
+    border-radius: 30px;
+    background-color: antiquewhite;
+    padding: 10px;
+}
+.auth-block input{
+    width: 90%;
+    height: 20px;
+    border-radius: 5px;
+    border: 1px solid;
+}
+.auth-block h1 {
+    padding: 10px;
+    text-align: center;
+}
+.name input{
+    margin: 5px;
+}
+.otch input{
+    margin: 5px;
+}
+.family input{
+    margin: 5px;
+}
+.email input{
+    margin: 5px;
+}
+.password input{
+    margin: 5px;
+}
+.auth-btn {
+    margin-top: 20px;
+    text-align: center;
+}
+.auth-btn button {
+    background-color: aliceblue;
+    border: 1px solid;
+    padding: 5px;
+    border-radius: 7px;
+}
+.regist-block {
+    margin: auto;
+    margin-top: 80px;
+    width: 400px;
+    height: 450px;
+    border-radius: 30px;
+    background-color: antiquewhite;
+    padding: 10px;
+}
+.regist-block h1 {
+    text-align: center;
+    margin: 15px;
+    margin-bottom: 30px;
+}
+.regist-block input {
+    width: 95%;
+    height: 20px;
+    background-color: aliceblue;
+    border: 1px solid;
+    border-radius: 5px;
+}
+.reg-btn {
+    text-align: center;
+    margin-top: 40px;
+}
+.reg-btn button {
+    padding: 9px;
+    border-radius: 20px;
+    background-color: azure;
+    border: 1px solid;
+}
