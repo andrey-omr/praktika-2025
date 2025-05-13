@@ -2,6 +2,22 @@ body {
     margin: 0;
     padding: 0;
 }
+.choise-block {
+    margin: calc(60vh/2);
+    text-align: center;
+}
+.choise-block h1 {
+    color: #111;
+    font-size: 30px;
+}
+.choise-block button{
+    background-color: antiquewhite;
+    border: 0;
+    border-radius: 40px;
+    font-size: 20px;
+    padding: 20px;
+    color: #333;
+}
 .main-block {
     display: flex;
 }
@@ -24,6 +40,9 @@ body {
     border-radius: 5px;
     padding: 5px;
 }
+.chats-block {
+    display: none;
+}
 .first button {
     display: flex;
     border-radius: 40px;
@@ -36,16 +55,16 @@ body {
     height: calc(100vh - 20px);
     padding: 10px;
 }
-.wwt {
+.account {
     display: flex;
     border-bottom: 1px solid #9b9898;
     padding-bottom: 5px;
 }
-.wwt img {
+.account img {
     height: 54px;
     border-radius: 50%;
 }
-.wwt p {
+.account p {
     margin-left: 10px;
     font-size: 22px;
     color: #f2f2f2;
@@ -95,7 +114,7 @@ section {
     text-align: center;
 }
 .auth-btn button {
-    background-color: blanchedalmond;
+    background-color: antiquewhite;
     border: 0;
     padding: 20px 40px;
     border-radius: 20px;
@@ -130,7 +149,7 @@ section {
     color: #333;
 }
 .regist-block button {
-    background-color: blanchedalmond;
+    background-color: antiquewhite;
     border: 0;
     padding: 20px 40px;
     border-radius: 20px;
