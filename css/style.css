@@ -40,7 +40,7 @@ body {
     border-radius: 5px;
     padding: 5px;
 }
-.chats-block {
+.chat-block {
     display: none;
 }
 .first button {
@@ -60,9 +60,12 @@ body {
     border-bottom: 1px solid #9b9898;
     padding-bottom: 5px;
 }
-.account img {
+.main-img img {
     height: 54px;
     border-radius: 50%;
+}
+.main-name {
+    color: antiquewhite;
 }
 .account p {
     margin-left: 10px;
