@@ -1,0 +1,20 @@
+https://www.google.com/search?q=%D1%87%D1%82%D0%BE+%D0%BD%D1%83%D0%B6%D0%BD%D0%BE+%D1%87%D1%82%D0%BE%D0%B1%D1%8B+%D0%BF%D0%BE%D0%B8%D1%81%D0%BA+%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%B0%D0%BB+js&rlz=1C1GCEA_enRU1129RU1129&oq=%D1%87%D1%82%D0%BE+%D0%BD%D1%83%D0%B6%D0%BD%D0%BE+%D1%87%D1%82%D0%BE%D0%B1%D1%8B+%D0%BF%D0%BE%D0%B8%D1%81%D0%BA+%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%B0%D0%BB+js&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIHCAEQIRigATIHCAIQIRigATIHCAMQIRifBdIBCTE4NDUxajFqN6gCALACAA&sourceid=chrome&ie=UTF-8
+
+<input type="text" id="search-input" placeholder="Введите запрос">
+<button id="search-button">Поиск</button>
+
+<div id="search-results"></div>
+
+<script>
+const data = ["яблоко", "груша", "вишня", "банан"]; // Пример массива данных
+
+document.getElementById("search-button").addEventListener("click", () => {
+  const searchTerm = document.getElementById("search-input").value.toLowerCase();
+  const results = data.filter(item => item.toLowerCase().includes(searchTerm));
+  let resultsHTML = "";
+  results.forEach(result => {
+    resultsHTML += `<p>${result}</p>`;
+  });
+  document.getElementById("search-results").innerHTML = resultsHTML;
+});
+</script>

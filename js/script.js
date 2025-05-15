@@ -29,8 +29,38 @@ function _post(params, callback) {
     post.send(params.data);
     post.onreadystatechange = function () {
         if (post.readyState == 4) {
-            callback(post.responseText);
+            callback(post.responseText)
             if (post.status == 401) {
+                onLoadChoise()
+                alert('Ошибка входа')
+            }
+        }
+    };
+}
+function _put(params, callback) {
+    let put = new XMLHttpRequest();
+    put.open('POST', `${params.url}`);
+    put.setRequestHeader("Authorization", "bearer" + token)
+    put.send(params.data);
+    put.onreadystatechange = function () {
+        if (put.readyState == 4) {
+            callback(put.responseText)
+            if (put.status == 401) {
+                onLoadChoise()
+                alert('Ошибка входа')
+            }
+        }
+    };
+}
+function _delete(params, callback) {
+    let del = new XMLHttpRequest();
+    del.open('POST', `${params.url}`);
+    del.setRequestHeader("Authorization", "bearer" + token)
+    del.send(params.data);
+    del.onreadystatechange = function () {
+        if (del.readyState == 4) {
+            callback(del.responseText)
+            if (del.status == 401) {
                 onLoadChoise()
                 alert('Ошибка входа')
             }
@@ -81,12 +111,12 @@ function onLoadAuth() {
         request_auth.append('pass', _elem('input[name="pass"]').value);
 
         _post({ url: `${host}/auth`, data: request_auth }, function (response) {
-            response = JSON.parse(response);
-            console.log(response)
+            responseA = JSON.parse(response)
+            
 
             _get({ url: 'modules/main.html' }, function (response) {
                 CONTENT.innerHTML = response
-                onLoadMain()
+                onLoadMain(responseA)
             })
         })
     })
@@ -130,17 +160,32 @@ function onLoadReg() {
     })
 }
 
-function onLoadMain() {
-    // let chat_list = new FormData();
+function onLoadMain(authdata) {
+    console.log(authdata)
+
     let img = document.createElement('img');
     img.src = `${host}/files/photos/default_men.png`;
-    _elem('.main-img').append(img)
+    _elem('.main-img').append(img);
     let p_text = document.createElement('p');
-    _elem('.main-name').textContent = _elem('input[name="name"]')
-    // let chat_url = `${host}/chats`;
-    // _get({ url: chat_url }, function (response) {
-    //     response = JSON.parse(response)
-    //     console.log(response);
-    // })
+    p_text.append(authdata.Data.name);
+    _elem('.main-name').append(p_text)
+
+    // _elem('.account-btn').addEventListener('click')
+
+    // let chats_url = `${host}/chats`
+
+    // let get_chats = new XMLHttpRequest();
+    // get_chats.open('GET', `${host}/chats`);
+    // get_chats.setRequestHeader("Authorization", "bearer" + token)
+    // get_chats.send();
+    // get_chats.onreadystatechange = function () {
+    //     if (get_chats.readyState == 4) {
+    //         CONTENT.innerHTML = this.responseText
+    //         if (get_chats.status == 401) {
+    //             onLoadChoise()
+    //             alert('Ошибка входа')
+    //         }
+    //     }
+    // };
 }
 //#endregion
