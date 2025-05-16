@@ -17,7 +17,7 @@ function _get(params, callback) {
             if (get.status == 401) {
                 onLoadChoise()
                 alert('Ошибка входа')
-            }
+            };
         }
 
     };
@@ -33,6 +33,10 @@ function _post(params, callback) {
             if (post.status == 401) {
                 onLoadChoise()
                 alert('Ошибка входа')
+            };
+            if (post.status == 422) {
+                alert('Пользователь с данным e-mail уже сущесвует')
+                onLoadRegist()
             }
         }
     };
@@ -48,7 +52,7 @@ function _put(params, callback) {
             if (put.status == 401) {
                 onLoadChoise()
                 alert('Ошибка входа')
-            }
+            };
         }
     };
 }
@@ -63,7 +67,7 @@ function _delete(params, callback) {
             if (del.status == 401) {
                 onLoadChoise()
                 alert('Ошибка входа')
-            }
+            };
         }
     };
 }
@@ -116,7 +120,7 @@ function onLoadAuth() {
 
             _get({ url: 'modules/main.html' }, function (response) {
                 CONTENT.innerHTML = response
-                onLoadMain(responseA)
+                onLoadMain(responseA), logoutMain()
             })
         })
     })
@@ -150,10 +154,10 @@ function onLoadReg() {
             response = JSON.parse(response);
             console.log(response);
 
-            if (response.success) {
-                _get({ url: 'modules/auth.html' }, function (response) {
-                CONTENT.innerHTML = response
-                onLoadAuthorize()
+            if (response == 200) {
+                _get({ url: 'modules/main.html' }, function (response) {
+                    CONTENT.innerHTML = response
+                    onLoadMain()
             })
             }
         })
@@ -161,31 +165,26 @@ function onLoadReg() {
 }
 
 function onLoadMain(authdata) {
+// 
     console.log(authdata)
-
     let img = document.createElement('img');
     img.src = `${host}/files/photos/default_men.png`;
     _elem('.main-img').append(img);
     let p_text = document.createElement('p');
     p_text.append(authdata.Data.name);
-    _elem('.main-name').append(p_text)
+    _elem('.main-name').append(p_text);
+// 
+    _elem('.search-button').addEventListener('click', function() {
+        _get({url: `${host}/chats`}, function(response) {
+            response = JSON.parse(response)
+            console.log(response)
+        })
+    })
+}
 
-    // _elem('.account-btn').addEventListener('click')
-
-    // let chats_url = `${host}/chats`
-
-    // let get_chats = new XMLHttpRequest();
-    // get_chats.open('GET', `${host}/chats`);
-    // get_chats.setRequestHeader("Authorization", "bearer" + token)
-    // get_chats.send();
-    // get_chats.onreadystatechange = function () {
-    //     if (get_chats.readyState == 4) {
-    //         CONTENT.innerHTML = this.responseText
-    //         if (get_chats.status == 401) {
-    //             onLoadChoise()
-    //             alert('Ошибка входа')
-    //         }
-    //     }
-    // };
+function logoutMain() {
+    _elem('.logout').addEventListener('click', function () {
+        _delete({url: `${host}/auth`})
+    })
 }
 //#endregion

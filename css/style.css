@@ -34,7 +34,7 @@ body {
 }
 .menu {
     padding: 10px;
-    width: 20vw;
+    width: 25vw;
     height: calc(100vh - 20px);
     background-color: #888;
     text-align: center;
@@ -51,17 +51,25 @@ body {
     border-radius: 5px;
     padding: 5px;
 }
-.first button {
-    display: flex;
-    border-radius: 40px;
-    width: 90%;
-    height: 50px;
-}
 .work-window {
     background: linear-gradient(cornflowerblue, turquoise);
     width: calc(100vw - 20vw);
     height: calc(100vh - 20px);
     padding: 10px;
+}
+.work-window button{
+    margin-left: 70vw;
+    background-color: antiquewhite;
+    border: 0;
+    border-radius: 40px;
+    font-size: 20px;
+    padding: 10px 20px;
+    color: #333;
+}
+.work-window button:hover {
+    background-color: #9b9898;
+    color: aquamarine;
+    border: 1px solid;
 }
 .account {
     display: flex;
@@ -69,7 +77,7 @@ body {
     padding-bottom: 5px;
 }
 .account-btn {
-    margin-left: 40%;
+    margin-left: 45%;
     margin-top: 10px;
     height: 50px;
     background-color: #9b9898;
