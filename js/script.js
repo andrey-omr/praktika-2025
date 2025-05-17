@@ -73,6 +73,27 @@ function _delete(params, callback) {
 }
 //#endregion
 
+
+function blinkError(selector) {
+    const TIMEOUT_BLINK = 300;
+    document.querySelectorAll(selector).forEach(element => {
+        element.classList.toggle('error')
+        setTimeout(() => {
+            element.classList.toggle('error')
+            setTimeout(() => {
+                element.classList.toggle('error')
+                setTimeout(() => {
+                    element.classList.toggle('error')
+                }, TIMEOUT_BLINK);
+            }, TIMEOUT_BLINK);
+
+        }, TIMEOUT_BLINK);
+
+    });
+}
+
+
+
 //#region Функционал
 function _elem(selector) {
     return document.querySelector(selector)
@@ -143,12 +164,42 @@ function onLoadRegist() {
 
 function onLoadReg() {
     _elem('.go-reg').addEventListener('click', function () {
+        const email = _elem('.regist-block input[name="email"]').value;
+        const pass = _elem('.regist-block input[name="pass"]').value;
+        const fam = _elem('.regist-block input[name="fam"]').value;
+        const name = _elem('.regist-block input[name="name"]').value;
+        const otch = _elem('.regist-block input[name="otch"]').value;
+
+        if (email.length == 0) {
+            blinkError('.regist-block input[name="email"]');
+            return;
+        }
+        if (pass.length == 0) {
+            blinkError('.regist-block input[name="pass"]');
+            return;
+        }
+
+        if (fam.length == 0) {
+            blinkError('.regist-block input[name="fam"]');
+            return;
+        }
+
+        if (name.length == 0) {
+            blinkError('.regist-block input[name="name"]');
+            return;
+        }
+
+        if (otch.length == 0) {
+            blinkError('.regist-block input[name="otch"]');
+            return;
+        }
+
         let request_reg = new FormData();
-        request_reg.append('email', _elem('input[name="email"]').value);
-        request_reg.append('pass', _elem('input[name="pass"]').value);
-        request_reg.append('fam', _elem('input[name="fam"]').value);
-        request_reg.append('name', _elem('input[name="name"]').value);
-        request_reg.append('otch', _elem('input[name="otch"]').value);
+        request_reg.append('email', email);
+        request_reg.append('pass', pass);
+        request_reg.append('fam', fam);
+        request_reg.append('name', name);
+        request_reg.append('otch', otch);
 
         _post({ url: `${host}/user`, data: request_reg }, function (response) {
             response = JSON.parse(response);
@@ -158,14 +209,14 @@ function onLoadReg() {
                 _get({ url: 'modules/main.html' }, function (response) {
                     CONTENT.innerHTML = response
                     onLoadMain()
-            })
+                })
             }
         })
     })
 }
 
 function onLoadMain(authdata) {
-// 
+//
     console.log(authdata)
     let img = document.createElement('img');
     img.src = `${host}/files/photos/default_men.png`;
@@ -173,18 +224,38 @@ function onLoadMain(authdata) {
     let p_text = document.createElement('p');
     p_text.append(authdata.Data.name);
     _elem('.main-name').append(p_text);
-// 
+//
     _elem('.search-button').addEventListener('click', function() {
-        _get({url: `${host}/chats`}, function(response) {
-            response = JSON.parse(response)
-            console.log(response)
+        _get('chats', false, function onLoadChats(response) {
+            response.forEach(element => {
+                let chat_block = _elem(`chat_${element.chat_id}`)
+                if (!chat_block) {
+                    _elem(".chat-block").append(
+                        makeChatBlock(element)
+                    )
+                } else {
+                    if (chat_block.getAttribute('last-msg') != element.chat_last_massage) {
+                        chat_block.style = 'background-color:red';
+                    }
+                }
+            })
         })
     })
 }
 
+function makeChatBlock() {
+    let chatBlock = document.createElement('div')
+    chatBlock.classList.add('chat-block')
+    chatBlock.id = `chat_${chatdata.chat_id}`
+    let chatimg = document.createElement('img')
+    chatimg.scr = host + chatdata.companion
+}
+
 function logoutMain() {
     _elem('.logout').addEventListener('click', function () {
-        _delete({url: `${host}/auth`})
+        _delete({url: `${host}/auth`}, function(response) {
+            console.log(response)
+        })
     })
 }
 //#endregion
