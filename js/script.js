@@ -13,7 +13,7 @@ function _get(params, callback) {
     get.send();
     get.onreadystatechange = function () {
         if (get.readyState == 4) {
-            callback(get.responseText);
+            callback(get.responseText)
             if (get.status == 401) {
                 onLoadChoise()
                 alert('Ошибка входа')
@@ -205,7 +205,7 @@ function onLoadReg() {
             response = JSON.parse(response);
             console.log(response);
 
-            if (response == 200) {
+            if (response.status == 200) {
                 _get({ url: 'modules/main.html' }, function (response) {
                     CONTENT.innerHTML = response
                     onLoadMain()
@@ -225,8 +225,11 @@ function onLoadMain(authdata) {
     p_text.append(authdata.Data.name);
     _elem('.main-name').append(p_text);
 //
+
+    let url_chats = `${host}/chats`
+
     _elem('.search-button').addEventListener('click', function() {
-        _get('chats', false, function onLoadChats(response) {
+        _get({url: url_chats}, function onLoadChats(response) {
             response.forEach(element => {
                 let chat_block = _elem(`chat_${element.chat_id}`)
                 if (!chat_block) {
@@ -243,12 +246,51 @@ function onLoadMain(authdata) {
     })
 }
 
-function makeChatBlock() {
-    let chatBlock = document.createElement('div')
-    chatBlock.classList.add('chat-block')
+function makeChatBlock(chatdata) {
+    let chatBlock = document.createElement('div');
+    chatBlock.classList.add('.chat-block');
     chatBlock.id = `chat_${chatdata.chat_id}`
-    let chatimg = document.createElement('img')
-    chatimg.scr = host + chatdata.companion
+    let chatimg = document.createElement('img');
+    chatimg.scr = host + chatdata.companion._photo_link
+    chatBlock.append(chatimg);
+    let chatname = document.createElement('p');
+    chatname.textContent = chatdata.chat_name
+    chatBlock.append(chatname)
+
+    chatBlock.setAttribute('last-msg', chatdata.chat_last_message)
+
+    chatBlock.onclick = function() {
+        CURRENT_CHAT = chatdata.chat_id;
+
+        this.style = ''
+        if (Array.isArray(_elem('.chat-block'))) {
+            _elem('.chat-block').forEach(element => {
+                element.classList.remove('active')
+            });
+        } else {
+            _elem('.chat-block').classList.remove('active')
+        }
+
+        this.classList.add('active')
+
+        clearInterval(TIMER_UPDATE_MSG)
+
+        _elem('.message-block').innerHTML = '';
+        loadMessages(chatdata.chat_id)
+        TIMER_UPDATE_MSG = setInterval(() => {
+            loadMessages(chatdata.chat_id)
+        }, INTERVAL_UPDATE_MSG);
+
+        _elem('.message-block').classList.remove(hidden)
+        _elem('.new-message-block').classList.remove(hidden)
+    }
+    return chatBlock;
+}
+
+function loadMessages(chat_id) {
+    let url_chats = `${host}/chats`
+
+    _get({url: url_chats})
 }
 
 function logoutMain() {
