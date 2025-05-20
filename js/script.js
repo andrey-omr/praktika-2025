@@ -231,17 +231,15 @@ function onLoadMain(authdata) {
     _elem('.search-button').addEventListener('click', function() {
         _get({url: url_chats}, function onLoadChats(response) {
             response.forEach(element => {
-                let chat_block = _elem(`chat_${element.chat_id}`)
+                let chat_block = document.getElementById(`chat_${element.chat_id}`)
                 if (!chat_block) {
-                    _elem(".chat-block").append(
-                        makeChatBlock(element)
-                    )
+                    _elem('.chat-block').append(makeChatBlock(element))
                 } else {
-                    if (chat_block.getAttribute('last-msg') != element.chat_last_massage) {
-                        chat_block.style = 'background-color:red';
+                    if (chat_block.getAttribute('last-msg') != element.chat_last_message) {
+                        chat_block.style = 'background-color:red'
                     }
                 }
-            })
+            });
         })
     })
 }
@@ -290,13 +288,62 @@ function makeChatBlock(chatdata) {
 function loadMessages(chat_id) {
     let url_chats = `${host}/chats`
 
-    _get({url: url_chats})
+    _get({url: url_chats}, function (message) {
+        message.forEach(element => {
+            let msg_block = document.getElementById(`msg_${element.id}`)
+            if (!msg_block) {
+                _elem('.message-block').append(
+                    makeMsg(element)
+                )
+            }
+        });
+    })
+}
+
+function getUserID() {
+    let id = localStorage.getItem("_UserID");
+    if (id) {
+        return id
+    } else {
+        return '';
+    }
+}
+
+function setUserID(id) {
+    localStorage.setItem("_UserID", id);
+}
+
+function makeMsg(messages) {
+    log(messages)
+    let msgBlock = document.createElement('div')
+    msgBlock.classList.add('msg')
+    messages.sender.id == getUserID() ? msgBlock.classList.add('msg-my') : msgBlock.classList.add('msg-me')
+    msgBlock.id = `msg_${messages.id}`
+
+    let msgSender = document.createElement('h4')
+    msgSender.textContent = `${messages.sender.name} ${messages.sender.otch} ${messages.sender.fam}`
+    msgBlock.append(msgSender)
+
+    let msgText = document.createElement('p')
+    msgText.textContent = `${messages.text}`
+    msgBlock.append(msgText)
+
+    let msgDatetime = document.createElement('p')
+    msgDatetime.classList.add('datetime')
+    msgDatetime.textContent = `${messages.datetime_create}`
+    msgBlock.append(msgDatetime)
+
+    return msgBlock;
 }
 
 function logoutMain() {
     _elem('.logout').addEventListener('click', function () {
-        _delete({url: `${host}/auth`}, function(response) {
+        let logout_main = new FormData();
+
+        _delete({url: `${host}/auth`, data: logout_main}, function(response) {
             console.log(response)
+
+            onLoadChoise()
         })
     })
 }
