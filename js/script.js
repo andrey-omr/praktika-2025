@@ -3,13 +3,20 @@ const host = 'http://api-messenger.web-srv.local';
 const CONTENT = document.querySelector('.content');
 //#endregion
 
-var token = ''
+function getToken() {
+    let token = localStorage.getItem('token')
+    if (token) {
+        return token
+    } else {
+        return ''
+    }
+}
 
 //#region AJAX запрос
 function _get(params, callback) {
     let get = new XMLHttpRequest();
     get.open('GET', `${params.url}`);
-    get.setRequestHeader("Authorization", "bearer" + token)
+    get.setRequestHeader("Authorization", "Bearer " + getToken())
     get.send();
     get.onreadystatechange = function () {
         if (get.readyState == 4) {
@@ -25,7 +32,7 @@ function _get(params, callback) {
 function _post(params, callback) {
     let post = new XMLHttpRequest();
     post.open('POST', `${params.url}`);
-    post.setRequestHeader("Authorization", "bearer" + token)
+    post.setRequestHeader("Authorization", "Bearer " + getToken())
     post.send(params.data);
     post.onreadystatechange = function () {
         if (post.readyState == 4) {
@@ -36,7 +43,7 @@ function _post(params, callback) {
             };
             if (post.status == 422) {
                 alert('Пользователь с данным e-mail уже сущесвует')
-                onLoadRegist()
+                onLoadChoise()
             }
         }
     };
@@ -44,7 +51,7 @@ function _post(params, callback) {
 function _put(params, callback) {
     let put = new XMLHttpRequest();
     put.open('POST', `${params.url}`);
-    put.setRequestHeader("Authorization", "bearer" + token)
+    put.setRequestHeader("Authorization", "Bearer " + getToken())
     put.send(params.data);
     put.onreadystatechange = function () {
         if (put.readyState == 4) {
@@ -58,9 +65,9 @@ function _put(params, callback) {
 }
 function _delete(params, callback) {
     let del = new XMLHttpRequest();
-    del.open('POST', `${params.url}`);
-    del.setRequestHeader("Authorization", "bearer" + token)
-    del.send(params.data);
+    del.open('DELETE', `${params.url}`, false);
+    del.setRequestHeader("Authorization", "Bearer " + getToken())
+    del.send();
     del.onreadystatechange = function () {
         if (del.readyState == 4) {
             callback(del.responseText)
@@ -91,7 +98,6 @@ function blinkError(selector) {
 
     });
 }
-
 
 
 //#region Функционал
@@ -228,8 +234,10 @@ function onLoadMain(authdata) {
 
     let url_chats = `${host}/chats`
 
-    _elem('.search-button').addEventListener('click', function() {
+    // _elem('.search-button').addEventListener('click', function() {
         _get({url: url_chats}, function onLoadChats(response) {
+            console.log(response);
+            
             response.forEach(element => {
                 let chat_block = document.getElementById(`chat_${element.chat_id}`)
                 if (!chat_block) {
@@ -241,7 +249,7 @@ function onLoadMain(authdata) {
                 }
             });
         })
-    })
+    // })
 }
 
 function makeChatBlock(chatdata) {
@@ -338,9 +346,7 @@ function makeMsg(messages) {
 
 function logoutMain() {
     _elem('.logout').addEventListener('click', function () {
-        let logout_main = new FormData();
-
-        _delete({url: `${host}/auth`, data: logout_main}, function(response) {
+        _delete({url: `${host}/auth`}, function(response) {
             console.log(response)
 
             onLoadChoise()
