@@ -1,15 +1,23 @@
 //#region Глобальные переменные
 const host = 'http://api-messenger.web-srv.local';
 const CONTENT = document.querySelector('.content');
+const INTERVAL_UPDATE_MSG =200;
+const INTERVAL_UPDATE_CHATS = 200;
+var CURRENT_CHAT;
+var TIMER_UPDATE_MSG;
 //#endregion
 
 function getToken() {
-    let token = localStorage.getItem('token')
+    let token = localStorage.getItem("token")
     if (token) {
         return token
     } else {
         return ''
     }
+}
+
+function setToken(token) {
+    localStorage.setItem("token", token)
 }
 
 //#region AJAX запрос
@@ -207,17 +215,18 @@ function onLoadReg() {
         request_reg.append('name', name);
         request_reg.append('otch', otch);
 
-        _post({ url: `${host}/user`, data: request_reg }, function (response) {
-            response = JSON.parse(response);
-            console.log(response);
-
-            if (response.status == 200) {
-                _get({ url: 'modules/main.html' }, function (response) {
-                    CONTENT.innerHTML = response
-                    onLoadMain()
-                })
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', `${host}/user`, false);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 200) {
+                console.log(xhr.responseText)
+                if (xhr.status != 200) {
+                    showMessage(`${JSON.parse(xhr.responseText).message}`);
+                } else {
+                    setToken(JSON.parse(xhr.responseText).Data.token);
+                }
             }
-        })
+        }
     })
 }
 
