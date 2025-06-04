@@ -37,25 +37,25 @@ function _get(params, callback) {
 
     };
 }
-function _post(params, callback) {
-    let post = new XMLHttpRequest();
-    post.open('POST', `${params.url}`);
-    post.setRequestHeader("Authorization", "Bearer " + getToken())
-    post.send(params.data);
-    post.onreadystatechange = function () {
-        if (post.readyState == 4) {
-            callback(post.responseText)
-            if (post.status == 401) {
-                onLoadChoise()
-                alert('Ошибка входа')
-            };
-            if (post.status == 422) {
-                alert('Пользователь с данным e-mail уже сущесвует')
-                onLoadChoise()
-            }
-        }
-    };
-}
+// function _post(params, callback) {
+//     let post = new XMLHttpRequest();
+//     post.open('POST', `${params.url}`);
+//     post.setRequestHeader("Authorization", "Bearer " + getToken())
+//     post.send(params.data);
+//     post.onreadystatechange = function () {
+//         if (post.readyState == 4) {
+//             callback(post.responseText)
+//             if (post.status == 401) {
+//                 onLoadChoise()
+//                 alert('Ошибка входа')
+//             };
+//             if (post.status == 422) {
+//                 alert('Пользователь с данным e-mail уже сущесвует')
+//                 onLoadChoise()
+//             }
+//         }
+//     };
+// }
 function _put(params, callback) {
     let put = new XMLHttpRequest();
     put.open('POST', `${params.url}`);
@@ -71,21 +71,21 @@ function _put(params, callback) {
         }
     };
 }
-function _delete(params, callback) {
-    let del = new XMLHttpRequest();
-    del.open('DELETE', `${params.url}`, false);
-    del.setRequestHeader("Authorization", "Bearer " + getToken())
-    del.send();
-    del.onreadystatechange = function () {
-        if (del.readyState == 4) {
-            callback(del.responseText)
-            if (del.status == 401) {
-                onLoadChoise()
-                alert('Ошибка входа')
-            };
-        }
-    };
-}
+// function _delete(params, callback) {
+//     let del = new XMLHttpRequest();
+//     del.open('DELETE', `${params.url}`, false);
+//     del.setRequestHeader("Authorization", "Bearer " + getToken())
+//     del.send();
+//     del.onreadystatechange = function () {
+//         if (del.readyState == 4) {
+//             callback(del.responseText)
+//             if (del.status == 401) {
+//                 onLoadChoise()
+//                 alert('Ошибка входа')
+//             };
+//         }
+//     };
+// }
 //#endregion
 
 
@@ -149,15 +149,42 @@ function onLoadAuth() {
         request_auth.append('email', _elem('input[name="email"]').value);
         request_auth.append('pass', _elem('input[name="pass"]').value);
 
-        _post({ url: `${host}/auth`, data: request_auth }, function (response) {
-            responseA = JSON.parse(response)
-            
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', `${host}/auth`);
+        xhr.setRequestHeader("Authorization", "Bearer " + getToken())
+        xhr.send(request_auth);
+        xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4) {
+            JSON.parse(xhr.responseText)
+
+            setToken(JSON.parse(xhr.responseText).Data.token)
 
             _get({ url: 'modules/main.html' }, function (response) {
                 CONTENT.innerHTML = response
-                onLoadMain(responseA), logoutMain()
+                onLoadMain(response);
+                logoutMain()
             })
-        })
+
+            // callback(xhr.responseText)
+            if (xhr.status == 401) {
+                onLoadChoise()
+                alert('Ошибка входа')
+            };
+            if (xhr.status == 422) {
+                alert('Пользователь с данным e-mail уже сущесвует')
+                onLoadChoise()
+            }
+        }
+        };
+        // _post({ url: `${host}/auth`, data: request_auth }, function (response) {
+        //     responseA = JSON.parse(response)
+            
+
+            // _get({ url: 'modules/main.html' }, function (response) {
+            //     CONTENT.innerHTML = response
+            //     onLoadMain(responseA), logoutMain()
+            // })
+        // })
     })
 }
 
@@ -243,21 +270,46 @@ function onLoadMain(authdata) {
 
     let url_chats = `${host}/chats`
 
-    // _elem('.search-button').addEventListener('click', function() {
-        _get({url: url_chats}, function onLoadChats(response) {
-            console.log(response);
-            
-            response.forEach(element => {
-                let chat_block = document.getElementById(`chat_${element.chat_id}`)
-                if (!chat_block) {
-                    _elem('.chat-block').append(makeChatBlock(element))
-                } else {
-                    if (chat_block.getAttribute('last-msg') != element.chat_last_message) {
-                        chat_block.style = 'background-color:red'
-                    }
+    let get = new XMLHttpRequest();
+    get.open('GET', url_chats);
+    get.setRequestHeader("Authorization", "Bearer " + getToken())
+    get.send();
+    get.onreadystatechange = function () {
+
+        if (get.readyState == 4) {
+            callback(get.responseText)
+
+            this.response.forEach(element => {
+            let chat_block = document.getElementById(`chat_${element.chat_id}`)
+            if (!chat_block) {
+                _elem('.chat-block').append(makeChatBlock(element))
+            } else {
+                if (chat_block.getAttribute('last-msg') != element.chat_last_message) {
+                    chat_block.style = 'background-color:red'
                 }
-            });
-        })
+            }
+        });
+
+            if (get.status == 401) {
+                onLoadChoise()
+                alert('Ошибка входа')
+            };
+        }
+
+    };
+    // _get({url: url_chats}, function onLoadChats(response) {
+    //     console.log(response);
+        
+        // response.forEach(element => {
+        //     let chat_block = document.getElementById(`chat_${element.chat_id}`)
+        //     if (!chat_block) {
+        //         _elem('.chat-block').append(makeChatBlock(element))
+        //     } else {
+        //         if (chat_block.getAttribute('last-msg') != element.chat_last_message) {
+        //             chat_block.style = 'background-color:red'
+        //         }
+        //     }
+        // });
     // })
 }
 
@@ -355,11 +407,24 @@ function makeMsg(messages) {
 
 function logoutMain() {
     _elem('.logout').addEventListener('click', function () {
-        _delete({url: `${host}/auth`}, function(response) {
-            console.log(response)
+        let fdata = new FormData();
 
-            onLoadChoise()
-        })
+        let xhr = new XMLHttpRequest();
+        xhr.open('DELETE', `${host}/auth`, false);
+        xhr.setRequestHeader("Authorization", "Bearer " + getToken())
+        xhr.send(fdata);
+        xhr.onreadystatechange = function () {
+
+            setToken(JSON.parse(xhr.responseText).Data.token)
+
+            if (xhr.readyState == 4) {
+                    callback(xhr.responseText)
+                if (xhr.status == 401) {
+                    onLoadChoise()
+                    alert('Ошибка входа')
+                };
+            }
+        };
     })
 }
 //#endregion

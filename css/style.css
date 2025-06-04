@@ -75,6 +75,7 @@ body {
     display: flex;
     border-bottom: 1px solid #9b9898;
     padding-bottom: 5px;
+    color: #fff;
 }
 .account-btn {
     margin-left: 45%;
