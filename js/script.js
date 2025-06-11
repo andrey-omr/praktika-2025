@@ -34,28 +34,27 @@ function _get(params, callback) {
                 alert('Ошибка входа')
             };
         }
-
     };
 }
-// function _post(params, callback) {
-//     let post = new XMLHttpRequest();
-//     post.open('POST', `${params.url}`);
-//     post.setRequestHeader("Authorization", "Bearer " + getToken())
-//     post.send(params.data);
-//     post.onreadystatechange = function () {
-//         if (post.readyState == 4) {
-//             callback(post.responseText)
-//             if (post.status == 401) {
-//                 onLoadChoise()
-//                 alert('Ошибка входа')
-//             };
-//             if (post.status == 422) {
-//                 alert('Пользователь с данным e-mail уже сущесвует')
-//                 onLoadChoise()
-//             }
-//         }
-//     };
-// }
+function _post(params, callback) {
+    let post = new XMLHttpRequest();
+    post.open('POST', `${params.url}`);
+    post.setRequestHeader("Authorization", "Bearer " + getToken())
+    post.send(params.data);
+    post.onreadystatechange = function () {
+        if (post.readyState == 4) {
+            callback(post.responseText)
+            if (post.status == 401) {
+                onLoadChoise()
+                alert('Ошибка входа')
+            };
+            if (post.status == 422) {
+                alert('Пользователь с данным e-mail уже сущесвует')
+                onLoadChoise()
+            }
+        }
+    };
+}
 function _put(params, callback) {
     let put = new XMLHttpRequest();
     put.open('POST', `${params.url}`);
@@ -71,21 +70,21 @@ function _put(params, callback) {
         }
     };
 }
-// function _delete(params, callback) {
-//     let del = new XMLHttpRequest();
-//     del.open('DELETE', `${params.url}`, false);
-//     del.setRequestHeader("Authorization", "Bearer " + getToken())
-//     del.send();
-//     del.onreadystatechange = function () {
-//         if (del.readyState == 4) {
-//             callback(del.responseText)
-//             if (del.status == 401) {
-//                 onLoadChoise()
-//                 alert('Ошибка входа')
-//             };
-//         }
-//     };
-// }
+function _delete(params, callback) {
+    let del = new XMLHttpRequest();
+    del.open('DELETE', `${params.url}`, false);
+    del.setRequestHeader("Authorization", "Bearer " + getToken())
+    del.send();
+    del.onreadystatechange = function () {
+        if (del.readyState == 4) {
+            callback(del.responseText)
+            if (del.status == 401) {
+                onLoadChoise()
+                alert('Ошибка входа')
+            };
+        }
+    };
+}
 //#endregion
 
 
@@ -154,18 +153,25 @@ function onLoadAuth() {
         xhr.setRequestHeader("Authorization", "Bearer " + getToken())
         xhr.send(request_auth);
         xhr.onreadystatechange = function () {
-        if (xhr.readyState == 4) {
-            JSON.parse(xhr.responseText)
-
+        // if (xhr.readyState == 4) {
             setToken(JSON.parse(xhr.responseText).Data.token)
 
-            _get({ url: 'modules/main.html' }, function (response) {
-                CONTENT.innerHTML = response
-                onLoadMain(response);
-                logoutMain()
-            })
+            let get_auth = new XMLHttpRequest();
+            get_auth.open('GET', 'modules/main.html');
+            get_auth.send()
+            get_auth.onreadystatechange = function () {
+                if (get_auth.readyState == 4) {
+                    CONTENT.innerHTML = this.responseText
 
-            // callback(xhr.responseText)
+                    onLoadMain(response);
+                    logoutMain()
+                }
+            }
+            // _get({ url: 'modules/main.html' }, function (response) {
+            //     CONTENT.innerHTML = response
+            //     onLoadMain(response);
+            //     logoutMain()
+            // })
             if (xhr.status == 401) {
                 onLoadChoise()
                 alert('Ошибка входа')
@@ -174,12 +180,10 @@ function onLoadAuth() {
                 alert('Пользователь с данным e-mail уже сущесвует')
                 onLoadChoise()
             }
-        }
+        // }
         };
         // _post({ url: `${host}/auth`, data: request_auth }, function (response) {
         //     responseA = JSON.parse(response)
-            
-
             // _get({ url: 'modules/main.html' }, function (response) {
             //     CONTENT.innerHTML = response
             //     onLoadMain(responseA), logoutMain()
@@ -244,13 +248,24 @@ function onLoadReg() {
 
         let xhr = new XMLHttpRequest();
         xhr.open('POST', `${host}/user`, false);
+        xhr.send(request_reg)
         xhr.onreadystatechange = function () {
-            if (xhr.readyState == 200) {
+            if (xhr.readyState == 4) {
                 console.log(xhr.responseText)
+                _get({ url: 'modules/main.html' }, function (response) {
+                        CONTENT.innerHTML = response
+                        onLoadMain(response);
+                        logoutMain()
+                    })
                 if (xhr.status != 200) {
-                    showMessage(`${JSON.parse(xhr.responseText).message}`);
-                } else {
-                    setToken(JSON.parse(xhr.responseText).Data.token);
+                    {
+                        setToken(JSON.parse(xhr.responseText).Data.token);
+                    }
+                    // _get({ url: 'modules/main.html' }, function (response) {
+                    //     CONTENT.innerHTML = response
+                    //     onLoadMain(response);
+                    //     logoutMain()
+                    // })
                 }
             }
         }
@@ -279,7 +294,7 @@ function onLoadMain(authdata) {
         if (get.readyState == 4) {
             callback(get.responseText)
 
-            this.response.forEach(element => {
+            response.forEach(element => {
             let chat_block = document.getElementById(`chat_${element.chat_id}`)
             if (!chat_block) {
                 _elem('.chat-block').append(makeChatBlock(element))
@@ -299,7 +314,6 @@ function onLoadMain(authdata) {
     };
     // _get({url: url_chats}, function onLoadChats(response) {
     //     console.log(response);
-        
         // response.forEach(element => {
         //     let chat_block = document.getElementById(`chat_${element.chat_id}`)
         //     if (!chat_block) {
@@ -410,7 +424,7 @@ function logoutMain() {
         let fdata = new FormData();
 
         let xhr = new XMLHttpRequest();
-        xhr.open('DELETE', `${host}/auth`, false);
+        xhr.open('DELETE', `${host}/auth`);
         xhr.setRequestHeader("Authorization", "Bearer " + getToken())
         xhr.send(fdata);
         xhr.onreadystatechange = function () {
