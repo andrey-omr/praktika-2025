@@ -144,50 +144,39 @@ function onLoadAuthorize() {
 
 function onLoadAuth() {
     _elem('.authorize').addEventListener('click', function () {
-        let request_auth = new FormData();
-        request_auth.append('email', _elem('input[name="email"]').value);
-        request_auth.append('pass', _elem('input[name="pass"]').value);
+        let fdata = new FormData();
+        fdata.append('email', _elem('input[name="email"]').value);
+        fdata.append('pass', _elem('input[name="pass"]').value);
 
         let xhr = new XMLHttpRequest();
         xhr.open('POST', `${host}/auth`);
         xhr.setRequestHeader("Authorization", "Bearer " + getToken())
-        xhr.send(request_auth);
+        xhr.send(fdata);
         xhr.onreadystatechange = function () {
-        // if (xhr.readyState == 4) {
-            setToken(JSON.parse(xhr.responseText).Data.token)
+            if (xhr.readyState == 4) {
+                {
+                    setToken(JSON.parse(xhr.responseText).Data.token)
+                }
 
-            let get_auth = new XMLHttpRequest();
-            get_auth.open('GET', 'modules/main.html');
-            get_auth.send()
-            get_auth.onreadystatechange = function () {
-                if (get_auth.readyState == 4) {
-                    CONTENT.innerHTML = this.responseText
-
-                    onLoadMain(response);
-                    logoutMain()
+                let get_auth = new XMLHttpRequest();
+                get_auth.open('GET', 'modules/main.html');
+                get_auth.send()
+                get_auth.onreadystatechange = function () {
+                    if (get_auth.readyState == 4) {
+                        CONTENT.innerHTML = this.responseText
+                        onLoadMain(response);
+                        logoutMain()
+                    }
                 }
             }
-            // _get({ url: 'modules/main.html' }, function (response) {
-            //     CONTENT.innerHTML = response
-            //     onLoadMain(response);
-            //     logoutMain()
-            // })
-            if (xhr.status == 401) {
-                onLoadChoise()
-                alert('Ошибка входа')
-            };
-            if (xhr.status == 422) {
-                alert('Пользователь с данным e-mail уже сущесвует')
-                onLoadChoise()
-            }
-        // }
         };
-        // _post({ url: `${host}/auth`, data: request_auth }, function (response) {
+        // _post({ url: `${host}/auth`, data: fdata }, function (response) {
         //     responseA = JSON.parse(response)
-            // _get({ url: 'modules/main.html' }, function (response) {
-            //     CONTENT.innerHTML = response
-            //     onLoadMain(responseA), logoutMain()
-            // })
+        //     setToken(JSON.parse(this.responseText).Data.token)
+        //     _get({ url: 'modules/main.html' }, function (response) {
+        //         CONTENT.innerHTML = response
+        //         onLoadMain(responseA), logoutMain()
+        //     })
         // })
     })
 }
